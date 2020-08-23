@@ -5,6 +5,11 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import Particles from "react-particles-js";
+import Clarifai from "clarifai";
+
+const app = new Clarifai.App({
+  apiKey: "b7ed5c25900d4d56885d5d2d66452909",
+});
 
 const particlesOptions = {
   particles: {
@@ -30,8 +35,21 @@ class App extends Component {
     console.log(event);
   };
 
-  onButtonSubmit = (event) => {
-    console.log(event);
+  onButtonSubmit = () => {
+    console.log("click");
+    app.models
+      .predict(
+        Clarifai.COLOR_MODEL,
+        "https://portal.clarifai.com/cms-assets/20180321145655/demo-004.jpg"
+      )
+      .then(
+        function (response) {
+          console.log(response);
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
   };
 
   render() {
