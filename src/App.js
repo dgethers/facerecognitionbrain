@@ -6,6 +6,7 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
+import FaceRecongition from "./components/FaceRecongition/FaceRecongition.js";
 
 const app = new Clarifai.App({
   apiKey: "b7ed5c25900d4d56885d5d2d66452909",
@@ -28,15 +29,16 @@ class App extends Component {
     super();
     this.state = {
       input: "",
+      imageUrl: "",
     };
   }
 
   onInputChange = (event) => {
-    console.log(event);
+    this.setState({ input: event.target.value });
   };
 
   onButtonSubmit = () => {
-    console.log("click");
+    this.setState({ imageUrl: this.state.input });
     app.models
       .predict(
         Clarifai.COLOR_MODEL,
@@ -63,8 +65,7 @@ class App extends Component {
           onInputChange={this.onInputChange}
           onButtonSubmit={this.onButtonSubmit}
         />
-        {/*
-        <FaceRecongition />*/}
+        <FaceRecongition imageUrl={this.state.imageUrl} />
       </div>
     );
   }
