@@ -24,19 +24,19 @@ const particlesOptions = {
   },
 };
 
+//TODO: rename box to boxes
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      box: {},
+      boxes: [],
       input: "",
       imageUrl: "",
     };
   }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
+    const clarifaiFace = data.region_info.bounding_box;
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
@@ -48,8 +48,8 @@ class App extends Component {
     };
   };
 
-  displayFaceBox = (box) => {
-    this.setState({ box: box });
+  displayFaceBoxes = (boxes) => {
+    this.setState({ boxes: boxes });
   };
 
   onInputChange = (event) => {
@@ -61,13 +61,19 @@ class App extends Component {
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
       .then((response) => {
-        this.displayFaceBox(this.calculateFaceLocation(response));
+        const regions = response.outputs[0].data.regions;
+        const boxes = [];
+        for (let region of regions) {
+          const calcValue = this.calculateFaceLocation(region);
+          boxes.push(calcValue);
+        }
+        this.displayFaceBoxes(boxes);
       })
       .catch((err) => console.log(err));
   };
 
   render() {
-    const { imageUrl, box } = this.state;
+    const { imageUrl, boxes } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -78,7 +84,7 @@ class App extends Component {
           onInputChange={this.onInputChange}
           onButtonSubmit={this.onButtonSubmit}
         />
-        <FaceRecognition box={box} imageUrl={imageUrl} />
+        <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
       </div>
     );
   }
