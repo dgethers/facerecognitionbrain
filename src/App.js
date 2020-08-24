@@ -6,7 +6,7 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import Particles from "react-particles-js";
 import Clarifai from "clarifai";
-import FaceRecongition from "./components/FaceRecongition/FaceRecongition.js";
+import FaceRecognition from "./components/FaceRecongition/FaceRecognition";
 
 const app = new Clarifai.App({
   apiKey: "b7ed5c25900d4d56885d5d2d66452909",
@@ -28,10 +28,30 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      box: {},
       input: "",
       imageUrl: "",
+      box: {},
     };
   }
+
+  calculateFaceLocation = (data) => {
+    const clarifaiFace =
+      data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById("inputimage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height,
+    };
+  };
+
+  displayFaceBox = (box) => {
+    this.setState({ box: box });
+  };
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
@@ -40,21 +60,28 @@ class App extends Component {
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
     app.models
-      .predict(
-        Clarifai.COLOR_MODEL,
-        "https://portal.clarifai.com/cms-assets/20180321145655/demo-004.jpg"
-      )
-      .then(
-        function (response) {
-          console.log(response);
-        },
-        function (err) {
-          console.log(err);
+      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+      .then((response) => {
+        if (response) {
+          fetch("http://localhost:3000/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: this.state.user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((count) => {
+              this.setState(Object.assign(this.state.user, { entries: count }));
+            });
         }
-      );
+        this.displayFaceBox(this.calculateFaceLocation(response));
+      })
+      .catch((err) => console.log(err));
   };
 
   render() {
+    const { imageUrl, box } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -65,7 +92,7 @@ class App extends Component {
           onInputChange={this.onInputChange}
           onButtonSubmit={this.onButtonSubmit}
         />
-        <FaceRecongition imageUrl={this.state.imageUrl} />
+        <FaceRecognition box={box} imageUrl={imageUrl} />
       </div>
     );
   }
