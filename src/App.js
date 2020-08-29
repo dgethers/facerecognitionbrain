@@ -28,6 +28,21 @@ const particlesOptions = {
   },
 };
 
+const initialState = {
+    boxes: [],
+    input: "",
+    imageUrl: "",
+    route: "signin",
+    isSignedIn: false,
+    user: {
+      id: "",
+      name: "",
+      email: "",
+      entries: 0,
+      joined: "",
+    },
+};
+
 class App extends Component {
   constructor() {
     super();
@@ -92,7 +107,7 @@ class App extends Component {
             body: JSON.stringify({
               email: this.state.user.email,
             }),
-          })
+          });
         }
 
         const regions = response.outputs[0].data.regions;
@@ -108,7 +123,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === "signout") {
-      this.setState({ isSignedIn: false });
+      this.setState(initialState);
     } else if (route === "home") {
       this.setState({ isSignedIn: true });
     }
