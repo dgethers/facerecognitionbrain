@@ -10,8 +10,6 @@ import FaceRecognition from "./components/FaceRecongition/FaceRecognition";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
 
-console.log("api-key", process.REACT_APP_API_KEY);
-
 const app = new Clarifai.App({
   apiKey: process.env.REACT_APP_API_KEY,
 });
