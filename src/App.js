@@ -99,7 +99,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    fetch(`${process.env.BACKEND_HOST}/findface`, {
+    fetch('https://obscure-sands-82425.herokuapp.com/findface', {
       method: "put",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
