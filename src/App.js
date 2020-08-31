@@ -99,7 +99,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    fetch("http://localhost:3000/findface", {
+    fetch(`${process.env.BACKEND_HOST}/findface`, {
       method: "put",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
