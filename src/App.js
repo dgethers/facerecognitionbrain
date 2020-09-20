@@ -3,7 +3,6 @@ import "./App.css";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
-import Rank from "./components/Rank/Rank";
 import Particles from "react-particles-js";
 import FaceRecognition from "./components/FaceRecongition/FaceRecognition";
 import Signin from "./components/Signin/Signin";
@@ -31,7 +30,6 @@ const initialState = {
     id: "",
     name: "",
     email: "",
-    entries: 0,
     joined: "",
   },
 };
@@ -49,7 +47,6 @@ class App extends Component {
         id: "",
         name: "",
         email: "",
-        entries: 0,
         joined: "",
       },
     };
@@ -61,7 +58,6 @@ class App extends Component {
         id: data.id,
         name: data.name,
         email: data.email,
-        entries: data.entries,
         joined: data.joined,
       },
     });
@@ -131,10 +127,6 @@ class App extends Component {
         {route === "home" ? (
           <div>
             <Logo />
-            <Rank
-              name={this.state.user.name}
-              entries={this.state.user.entries}
-            />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
