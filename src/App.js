@@ -35,14 +35,14 @@ const initialState = {
 };
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       boxes: [],
       input: "",
       imageUrl: "",
-      route: "signin",
-      isSignedIn: false,
+      route: "home",
+      isSignedIn: true,
       user: {
         id: "",
         name: "",
@@ -64,15 +64,15 @@ class App extends Component {
   };
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.region_info.bounding_box;
+    const clarifaiFace = data.first;
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
     return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height,
+      leftCol: clarifaiFace.leftColumn * width,
+      topRow: clarifaiFace.topRow * height,
+      rightCol: width - clarifaiFace.rightColumn * width,
+      bottomRow: height - clarifaiFace.bottomRow * height,
     };
   };
 
@@ -95,8 +95,8 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    fetch(`${process.env.REACT_APP_SERVICE_HOST}/findface`, {
-      method: "put",
+    fetch(`http://localhost:8080/demographics`, {
+      method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         imageUrl: this.state.input,
